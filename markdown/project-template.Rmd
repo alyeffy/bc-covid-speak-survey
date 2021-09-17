@@ -1,0 +1,35 @@
+---
+title: "An R document with results"
+output: html_document
+authors: author1
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project title
+
+Describe your project statement.
+
+## Procedure
+
+Describe steps you followed
+
+## Mini demo or visualizations
+
+```{r cars}
+summary(cars)
+```
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+## Findings
+
+Describe your insights about the data
+
+## Conclusion
+
+How does it connect to the project statement
