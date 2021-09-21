@@ -32,12 +32,13 @@ Mentor: Dr. Connie Brett
 
 [Data Visualization](https://github.com/alyeffy/bc-covid-speak-survey/milestone/4): Ha, Lavanya
 
-[Sanity checking](https://github.com/alyeffy/bc-covid-speak-survey/milestone/5): Shreya, Connie, Alyssa
+[Sanity-Checking](https://github.com/alyeffy/bc-covid-speak-survey/milestone/5): Shreya, Connie, Alyssa
 
 ## Vancouver Datajam 2021 Schedule:
 
 ### Main page: https://vancouverdatajam.ca/
 #### Event format: 100% online
+#### [Project video demo/presentation]()
 
 #### Important dates: 
 
