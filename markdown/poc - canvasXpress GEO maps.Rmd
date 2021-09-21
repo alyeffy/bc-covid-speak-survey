@@ -1,0 +1,77 @@
+---
+title: "CanvasXpress - Maps"
+author: "Dr. Connie Brett"
+date: "9/20/2021"
+output: 
+  html_document: 
+    toc: yes
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+
+library(canvasXpress)
+library(htmlwidgets)
+library(jsonlite)
+
+
+# downsampled to 1% of original using mapshaper.org
+boundaries.lha <- read_json('../data/map_LHA_boundaries.json')
+
+ha.events <- JS("{
+  'mousemove' : function(o, e, t) {
+                  if (o) {
+                    t.showInfoSpan(e, '<b>' + o.z.HLTH_AUTHORITY_NAME[0] + 
+                                      '</b> <i>(' + o.z.HLTH_AUTHORITY_CODE[0] + ')</i>');
+                  };
+}}")
+
+lha.events <- JS("{
+  'mousemove' : function(o, e, t) {
+                  if (o) {
+  console.log(o.z);
+                    t.showInfoSpan(e, '<b>' + o.z.LOCAL_HLTH_AREA_NAME[0] + 
+                                      '</b> <i>(' + o.z.LOCAL_HLTH_AREA_CODE[0] + ')</i><br/>' +
+                                      'HA: ' + o.z.HLTH_AUTHORITY_NAME[0] + 
+                                      ' <i>(' + o.z.HLTH_AUTHORITY_CODE[0] + ')</i>');
+                    };
+}}")
+
+```
+
+## GEO Data 
+
+**Preparation Notes**
+
+* Map boundary data was obtained from:
+https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries
+
+* Data was downsampled to 1% of original using http://mapshaper.org
+
+
+### Boundaries
+
+```{r ha_initial}
+canvasXpress(
+    data            = FALSE,
+    graphType       = "Map",
+    title           = "Health Authorities (HA)",
+    colorBy         = "HLTH_AUTHORITY_NAME",
+    showLegendTitle = FALSE,
+    topoJSON        = boundaries.lha,
+    events          = ha.events
+)
+```
+
+
+```{r lha_initial}
+canvasXpress(
+    data       = FALSE,
+    graphType  = "Map",
+    title      = "Local Health Authorities (LHA)",
+    colorBy    = "LOCAL_HLTH_AREA_NAME",
+    showLegend = FALSE,
+    topoJSON   = boundaries.lha,
+    events     = lha.events
+)
+```
