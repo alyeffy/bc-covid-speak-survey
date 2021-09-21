@@ -24,15 +24,15 @@ Team lead: Alyssa Fegen (@alyeffy)
 
 Mentor: Dr. Connie Brett
 
-Documentation - The following team member(s) are responsible for creating the documentation on how to use the package, including the functions and vignettes:
+[Documentation](https://github.com/alyeffy/bc-covid-speak-survey/milestone/1): Warren, Nathan
 
-Scripting/Coding - The following team member(s) are responsible for writing and packaging the package functions:
+[Scripting/Coding](https://github.com/alyeffy/bc-covid-speak-survey/milestone/2): Shreya, Ruijia
 
-Modelling/Analysis - The following team member(s) are responsible for breaking down the data on key the indicators and generating a report on their findings: 
+[Modelling/Analysis](https://github.com/alyeffy/bc-covid-speak-survey/milestone/3): Warren, Nathan, Vincent
 
-Data Visualization - The following team member(s) are responsible for utilizing the package to create sample diagrams that tell a story with our findings:
+[Data Visualization](https://github.com/alyeffy/bc-covid-speak-survey/milestone/4): Ha, Lavanya
 
-Sanity checking - The following team member(s) are responsible for checking/testing all of our work, ensuring it is correct and that it is applicable to our package scope:
+[Sanity checking](https://github.com/alyeffy/bc-covid-speak-survey/milestone/5): Shreya, Connie, Alyssa
 
 ## Vancouver Datajam 2021 Schedule:
 
