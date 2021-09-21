@@ -30,7 +30,7 @@ Mentor: Dr. Connie Brett
 
 [Modelling/Analysis](https://github.com/alyeffy/bc-covid-speak-survey/milestone/3): Warren, Nathan, Vincent
 
-[Data Visualization](https://github.com/alyeffy/bc-covid-speak-survey/milestone/4): Ha, Lavanya
+[Data Visualization](https://github.com/alyeffy/bc-covid-speak-survey/milestone/4): Ha, Lavanya, Saheba
 
 [Sanity-Checking](https://github.com/alyeffy/bc-covid-speak-survey/milestone/5): Shreya, Connie, Alyssa
 
