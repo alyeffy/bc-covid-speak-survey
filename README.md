@@ -1,24 +1,38 @@
-# Vancouver Datajam 2021 Project template 
-
-This repository contains an R project template.
+# Vancouver Datajam 2021 Project
 
 ## Project title
 
+Creating an R package to visualize and interpret the SPEAK Survey on the experiences of BC residents with the provincial response to the COVID-19 pandemic.
+
 ## Project statement
+
+The BC COVID-19 SPEAK survey was a web-based population health survey to elicit BC resident experience, knowledge and actions during the COVID-19 pandemic, understand the impacts of COVID-19, and to plan approaches for future public health measures. The survey was created through collaboration between the BC Centre for Disease Control, First Nations Health Authority, Vancouver Coastal Health, Fraser Health, Interior Health, Northern Health, Island Health and the Office of the Provincial Health Officer. The survey ran from May 12 to May 31, 2020. Phase 1 restrictions under the public health emergency began March 14, 2020 and Phase 2 restrictions began May 19, 2020.
+
+The BC COVID-19 SPEAK survey has generated specific information about British Columbians including the impacts of pandemic measures and their response. This is vital information in planning future public health measures and policies. This information will be an important source of insight for provincial and local government, healthcare decision-makers, academia, and community stakeholders to collaboratively address impacts of the COVID-19 pandemic.
+
+In order to appropriately develop public health measures and policies that take into consideration unintended impacts, an accurate understanding of British Columbians’ experience, knowledge and actions during the COVID-19 pandemic is crucial. While provincial COVID-19 case and fatality counts provide a direct view of COVID-19 pandemic progression, there was a need for comprehensive, relevant and representative local level information on the impacts of public health measures on other aspects of BC residents’ lives.
+
+Special acknowledgement to Angela Reid, Analisa Blake, and Cornel Lencar from Island Health Authority for bringing this project forward, and providing data and context. For more information on the BC COVID-19 SPEAK survey, please visit the following pages:
+
+- [SPEAK Survey Information](http://www.bccdc.ca/health-info/diseases-conditions/covid-19/covid-19-survey)
+- [SPEAK Survey Dashboard](http://www.bccdc.ca/health-professionals/data-reports/bc-covid-19-speak-dashboard)
+- [SPEAK Survey Technical Notes](http://www.bccdc.ca/Health-Info-Site/Documents/Technical_Notes_COVID_19_SPEAK.PDF)
 
 ## Project team members
 
-Team lead:
+Team lead: Alyssa Fegen (@alyeffy)
 
-Mentor:
+Mentor: Dr. Connie Brett
 
-Documentation:
+Documentation - The following team member(s) are responsible for creating the documentation on how to use the package, including the functions and vignettes:
 
-Scripting:
+Scripting/Coding - The following team member(s) are responsible for writing and packaging the package functions:
 
-Modelling: 
+Modelling/Analysis - The following team member(s) are responsible for breaking down the data on key the indicators and generating a report on their findings: 
 
-Sanity checking: 
+Data Visualization - The following team member(s) are responsible for utilizing the package to create sample diagrams that tell a story with our findings:
+
+Sanity checking - The following team member(s) are responsible for checking/testing all of our work, ensuring it is correct and that it is applicable to our package scope:
 
 ## Vancouver Datajam 2021 Schedule:
 
