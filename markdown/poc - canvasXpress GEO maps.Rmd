@@ -6,72 +6,140 @@ output:
   html_document: 
     toc: yes
     theme: cerulean
+params:
+    data_dir:              "../data"
+    lha_boundaries_file:  "map_LHA_boundaries.json"
+    summary_data_file:    "BC_COVID_19_Survey_downloadable_data.xlsx"
+    data_dictionary_file: "Data_dictionary_with_description_20201105_CORRECTED.xlsx"
+    
 ---
 
 ```{r setup, include=FALSE}
-
 library(canvasXpress)
 library(htmlwidgets)
 library(jsonlite)
+library(dplyr)
+library(glue)
+library(openxlsx)
+library(tibble)
 
-
-# downsampled to 1% of original using mapshaper.org
-boundaries.lha <- read_json('../data/map_LHA_boundaries.json')
-
-ha.events <- JS("{
-  'mousemove' : function(o, e, t) {
-                  if (o) {
-                    t.showInfoSpan(e, '<b>' + o.z.HLTH_AUTHORITY_NAME[0] + 
-                                      '</b> <i>(' + o.z.HLTH_AUTHORITY_CODE[0] + ')</i>');
-                  };
-}}")
-
-lha.events <- JS("{
-  'mousemove' : function(o, e, t) {
-                  if (o) {
-  console.log(o.z);
-                    t.showInfoSpan(e, '<b>' + o.z.LOCAL_HLTH_AREA_NAME[0] + 
-                                      '</b> <i>(' + o.z.LOCAL_HLTH_AREA_CODE[0] + ')</i><br/>' +
-                                      'HA: ' + o.z.HLTH_AUTHORITY_NAME[0] + 
-                                      ' <i>(' + o.z.HLTH_AUTHORITY_CODE[0] + ')</i>');
-                    };
-}}")
+# for debugging purposes (will not execute when knit)
+if (interactive()) {
+    try({ setwd('markdown') }, silent = T)
+    params <- list(data_dir             = "../data",
+                   lha_boundaries_file  = "map_LHA_boundaries.json",
+                   summary_data_file    = "BC_COVID_19_Survey_downloadable_data.xlsx",
+                   data_dictionary_file = "Data_dictionary_with_description_20201105_CORRECTED.xlsx")
+}
 
 ```
 
-## GEO Data 
 
-**Preparation Notes**
+
+## CanvasXpress Visualization of LHA summarized data 
+
+**Dataset Preparation Notes**
+
+* This RMD utilizes the SPEAK survey v1 (summarized) data spreadsheet  
+* Names had to be cleaned to match up with the IDs in the data dictionary
+
+```{r get_summary_data}
+summary.raw <- read.xlsx(xlsxFile       = glue('{params$data_dir}/{params$summary_data_file}'),
+                        sheet           = 'Survey Data', 
+                        colNames        = FALSE,
+                        skipEmptyCols   = FALSE,
+                        na.strings      = c("NA", "Suppressed", ""),
+                        fillMergedCells = TRUE)
+
+# get good column names we can use
+colnames(summary.raw) <- gsub('(%)', '', summary.raw[2, ], fixed = T) %>%
+    trimws() %>%
+    make.names(unique = T)
+
+# hold onto "row" metadata, this is the communities/names
+survey.col.meta <- summary.raw[1, , drop = F] %>% 
+    t() %>% as.data.frame() %>%
+    rownames_to_column("Name") %>%
+    rename(Area = `1`)
+
+# drop the old rows we used to make column names and index the metadata
+summary.raw <- summary.raw[-(1:2), ]
+
+# keep the first two columns when we sort out the part of the health data we want (LHA)
+keep <- list("Domain" = 1, "Indicator" = 2)
+
+# subset to the LHA columns
+summary.lha <- summary.raw[, c(unlist(keep), 
+                               which(survey.col.meta$Area == "Sub Regions"))]
+
+# match the LHA IDs for use with map regions
+id_lookup <- read.xlsx(xlsxFile        = glue('{params$data_dir}/{params$data_dictionary_file}'),
+                       sheet           = 'CHSA_LHA_HSDA_HA_lookup', 
+                       colNames        = TRUE,
+                       na.strings      = c("NA", "Suppressed", ""),
+                       fillMergedCells = TRUE) %>%
+    select(LHA, LHA_Name) %>%
+    mutate(LHA_Name = make.names(LHA_Name, unique = T))
+
+# raw data
+data    <- summary.lha[, -unlist(keep)] %>% t() %>% as.data.frame()
+colnames(data) <- make.names(colnames(data), unique = T)
+
+# column/sample (location) annotations
+smp.ann <- summary.lha[, names(keep)]
+rownames(smp.ann) <- colnames(data)
+
+# row/variable (indication) annotations
+var.ann <- data.frame("LHA_Name" = rownames(data), stringsAsFactors = F) %>%
+    left_join(id_lookup, by = "LHA_Name")
+rownames(var.ann) <- var.ann$LHA_Name
+var.ann <- var.ann %>% select(LHA)
+
+#cleanup unused variables
+# rm(summary.raw, survey.col.meta, id_lookup, keep, summary.lha)
+```
+
+**GEO Data Notes Preparation Notes**
 
 * Map boundary data was obtained from:
 https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries
 
 * Data was downsampled to 1% of original using http://mapshaper.org
 
-
-### Boundaries
-
-```{r ha_initial}
-canvasXpress(
-    data            = FALSE,
-    graphType       = "Map",
-    title           = "Health Authorities (HA)",
-    colorBy         = "HLTH_AUTHORITY_NAME",
-    showLegendTitle = FALSE,
-    topoJSON        = boundaries.lha,
-    events          = ha.events
-)
+```{r geo_data}
+# lat/long geojson
+boundaries.lha <- read_json(glue('{params$data_dir}/{params$lha_boundaries_file}'))
 ```
 
+* Visualization Notes
 
 ```{r lha_initial}
+# chart tooltip events
+lha.events <- JS("{
+  'mousemove' : function(o, e, t) {
+  console.log(t);
+}}")
+
+# get the row and column names from the geojson 
+# (so the map can match the values up to sections)
+
+ids <- boundaries.lha$features %>%
+    lapply(function(x) { list(x[["properties"]]$LOCAL_HLTH_AREA_CODE,
+                              x[["properties"]]$OBJECTID) })
+ids <- as.data.frame(matrix(unlist(ids), ncol = 2, byrow = T), stringsAsFactors = F) %>%
+    rename(LOCAL_HLTH_AREA_CODE = 1, OBJECTID = 2)
+
+rownames(data) <- var.ann$LHA
+data <- data[match(ids$LOCAL_HLTH_AREA_CODE, rownames(data)), ]
+
 canvasXpress(
-    data       = FALSE,
+    data       = data,
+    # data = FALSE,
     graphType  = "Map",
     title      = "Local Health Authorities (LHA)",
-    colorBy    = "LOCAL_HLTH_AREA_NAME",
     showLegend = FALSE,
     topoJSON   = boundaries.lha,
-    events     = lha.events
+    colorBy    = "HLTH_AUTHORITY_NAME",
+    events     = NULL #lha.events
 )
 ```
