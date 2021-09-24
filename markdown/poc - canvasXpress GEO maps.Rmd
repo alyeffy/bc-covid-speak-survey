@@ -130,6 +130,7 @@ smp.sm  <- smp.ann[sel, ]
 var.sm  <- var.ann
 ```
 
+The below chart is the base chart, raw map data showing the various areas/etc that come by default on the shape file for LHA
 
 ```{r lha_initial}
 # chart tooltip events
@@ -145,30 +146,96 @@ lha.events <- JS("{
 }}")
 
 # just show the map data (geojson)
-canvasXpress(
-    data       = FALSE,
-    graphType  = "Map",
-    title      = "Local Health Authorities (LHA)",
-    showLegend = FALSE,
-    topoJSON   = boundaries.lha,
-    colorBy    = "HLTH_AUTHORITY_NAME",
-    events     = lha.events
-)
+# canvasXpress(
+#     data       = FALSE,
+#     graphType  = "Map",
+#     title      = "Local Health Authorities (LHA)",
+#     showLegend = FALSE,
+#     topoJSON   = boundaries.lha,
+#     colorBy    = "LOCAL_HLTH_AUTHORITY_CODE",
+#     events     = lha.events
+# )
 
 # with the added example data
 
 # waiting on ID join, working with the CX author
+# this will eventually be the way the chart is made
 # canvasXpress(
 #     data          = data.sm,
 #     varAnnot      = var.sm,
 #     smpAnnot      = smp.sm,
 #     graphType     = "Map",
-#     mapPropertyId = "ID_1",
+#     mapPropertyId = "LOCAL_HLTH_AUTHORITY_CODE",
 #     title         = "Local Health Authorities (LHA)",
 #     showLegend    = FALSE,
 #     topoJSON      = boundaries.lha,
-#     colorBy       = "HLTH_AUTHORITY_NAME",
+#     colorBy       = "X4",
 #     events        = lha.events
 # )
 
 ```
+
+
+I've joined the map data into the chart here and removed most of the default parameters/values.
+
+
+```{r work_around}
+# we can add the data directly to the map data for now until the library directly supports it
+
+#NOTE: I'm not reformatting the data to make this easier because eventually it will be added to the 
+#      CX call as in the above commented out call.  
+
+# add data to the map
+
+features <- boundaries.lha$features
+
+keep        <- c(2, 3, 8, 9)
+keep.prefix <- "_" # pull them to the top of the sorted list!
+    
+features.data <- lapply(features, FUN = function(x) {
+    new           <- data[rownames(data) == x$properties$LOCAL_HLTH_AREA_CODE, ]
+    colnames(new) <- paste(smp.ann$Domain, smp.ann$Indicator, sep = ": ")
+    x$properties    <- x$properties[keep]
+    names(x$properties) <- paste0(keep.prefix, names(x$properties))
+    x$properties <- append(x$properties, new[1, ])
+    x
+})
+
+boundaries.lha.data <- boundaries.lha
+boundaries.lha.data$features <- features.data
+
+lha.data.events <- JS("{
+  'mousemove' : function(o, e, t) {
+                    if (o) {
+                        t.showInfoSpan(e, '<b>' + this.colorBy + ': ' + o.z[this.colorBy] + '</b><hr/>' + 
+                                          o.z._LOCAL_HLTH_AREA_NAME[0] + '<i>(' + o.z._LOCAL_HLTH_AREA_CODE[0] + ')</i><br/>' +
+                                          'Health Authority: ' + o.z._HLTH_AUTHORITY_NAME[0] + ' <i>(' + o.z._HLTH_AUTHORITY_CODE[0] + ')</i>');
+                    };
+}}")
+
+canvasXpress(
+    data                    = FALSE,
+    graphType               = "Map",
+    title                   = "SPEAK 1 Summary Data (%) by LHA",
+    subtitle                = 'Right-Click and use the "Color By" menu to change the Domain:Indicator shown' ,
+    titleScaleFontFactor    = 0.5,
+    subtitleScaleFontFactor = 0.3,
+    legendPosition          = "bottom",
+    colorSpectrum           = list("rgb(240, 240, 240)", "yellow", "orange", "red", "firebrick"),
+    colorSpectrumBreaks     = list(0, 25, 50, 75, 100),
+    topoJSON                = boundaries.lha.data,
+    colorBy                 = "Experience: Mental Health Worsening",
+    citation                = "Note: Hover over chart areas to view detailed information",
+    citationScaleFontFactor = 2,
+    width = "800", 
+    height = "800",
+    events                  = lha.data.events
+)
+
+```
+
+
+
+**Chart usage Tips**
+
+Right click on the map chart and go to "Color By" - all the Domains and Indicators are shown in the list and you can change around the color-by attribute.  The scale is fixed (0-100) because it is important that while you explore different factors you don't have to try to mentally shift what the colors mean.
