@@ -32,6 +32,11 @@ if (interactive()) {
                    data_dictionary_file = "Data_dictionary_with_description_20201105_CORRECTED.xlsx")
 }
 
+if (packageVersion('canvasXpress') <= "1.36.1") {
+    message('WARNING: update canvasXpress to 1.36.2+ for map usage')
+    message('To get the latest cran candiate release use devtools::install_github("cb4ds/canvasXpress@cran")')
+}
+
 ```
 
 
@@ -84,7 +89,7 @@ id_lookup <- read.xlsx(xlsxFile        = glue('{params$data_dir}/{params$data_di
 # raw data
 data    <- summary.lha[, -unlist(keep)] %>% t() %>% as.data.frame()
 colnames(data) <- make.names(colnames(data), unique = T)
-
+    
 # column/sample (location) annotations
 smp.ann <- summary.lha[, names(keep)]
 rownames(smp.ann) <- colnames(data)
@@ -92,8 +97,7 @@ rownames(smp.ann) <- colnames(data)
 # row/variable (indication) annotations
 var.ann <- data.frame("LHA_Name" = rownames(data), stringsAsFactors = F) %>%
     left_join(id_lookup, by = "LHA_Name")
-rownames(var.ann) <- var.ann$LHA_Name
-var.ann <- var.ann %>% select(LHA)
+rownames(var.ann) <- rownames(data)
 
 #cleanup unused variables
 # rm(summary.raw, survey.col.meta, id_lookup, keep, summary.lha)
@@ -113,33 +117,58 @@ boundaries.lha <- read_json(glue('{params$data_dir}/{params$lha_boundaries_file}
 
 * Visualization Notes
 
+This visualization uses CanvasXpress (www.canvasxpress.org)
+
+
+```{r sample_data_for_debugging}
+rownames(data) <- var.ann$LHA
+rownames(var.ann) <- var.ann$LHA
+
+sel <- c("X4", "X6", "X8")
+data.sm <- data[, sel]
+smp.sm  <- smp.ann[sel, ]
+var.sm  <- var.ann
+```
+
+
 ```{r lha_initial}
 # chart tooltip events
 lha.events <- JS("{
   'mousemove' : function(o, e, t) {
-  console.log(t);
+                    if (o) {
+                        console.log(o);
+                        t.showInfoSpan(e, '<b>' + o.z.LOCAL_HLTH_AREA_NAME[0] + 
+                                          '</b> <i>(' + o.z.LOCAL_HLTH_AREA_CODE[0] + ')</i><br/>' +
+                                          'HA: ' + o.z.HLTH_AUTHORITY_NAME[0] + 
+                                          ' <i>(' + o.z.HLTH_AUTHORITY_CODE[0] + ')</i>');
+                    };
 }}")
 
-# get the row and column names from the geojson 
-# (so the map can match the values up to sections)
-
-ids <- boundaries.lha$features %>%
-    lapply(function(x) { list(x[["properties"]]$LOCAL_HLTH_AREA_CODE,
-                              x[["properties"]]$OBJECTID) })
-ids <- as.data.frame(matrix(unlist(ids), ncol = 2, byrow = T), stringsAsFactors = F) %>%
-    rename(LOCAL_HLTH_AREA_CODE = 1, OBJECTID = 2)
-
-rownames(data) <- var.ann$LHA
-data <- data[match(ids$LOCAL_HLTH_AREA_CODE, rownames(data)), ]
-
+# just show the map data (geojson)
 canvasXpress(
-    data       = data,
-    # data = FALSE,
+    data       = FALSE,
     graphType  = "Map",
     title      = "Local Health Authorities (LHA)",
     showLegend = FALSE,
     topoJSON   = boundaries.lha,
     colorBy    = "HLTH_AUTHORITY_NAME",
-    events     = NULL #lha.events
+    events     = lha.events
 )
+
+# with the added example data
+
+# waiting on ID join, working with the CX author
+# canvasXpress(
+#     data          = data.sm,
+#     varAnnot      = var.sm,
+#     smpAnnot      = smp.sm,
+#     graphType     = "Map",
+#     mapPropertyId = "ID_1",
+#     title         = "Local Health Authorities (LHA)",
+#     showLegend    = FALSE,
+#     topoJSON      = boundaries.lha,
+#     colorBy       = "HLTH_AUTHORITY_NAME",
+#     events        = lha.events
+# )
+
 ```
