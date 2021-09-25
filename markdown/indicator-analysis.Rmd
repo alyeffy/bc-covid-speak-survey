@@ -1,0 +1,148 @@
+---
+title: "An R document with results"
+output: html_document
+authors: author1
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Inicator Analysis
+
+Explore and break down the data on key indicators.
+
+## Procedure
+
+Describe steps you followed
+
+## Full load of the SPEAK survey data
+
+```{r cars}
+library(readxl)
+# SPEAKI_Survey_Data_deidentified <- read_excel("data/SPEAKI_Survey_Data_deidentified.xlsx")
+
+# Downsample the dataset
+dt <- head(SPEAKI_Survey_Data_deidentified, 1000)
+write.csv(dt, "data/sample_survey_data.csv")
+
+
+dt <- read_csv("data/sample_survey_data.csv")
+
+dt2 <- read.csv("data/VIHA_R2_data.csv")
+
+names(dt2) <- names(dt2) %>% tolower()
+
+dt2 %>% head()
+```
+
+
+#Binary Function
+```{r}
+bin_indicator_ratio <- function(data,indicator) {
+  data_clean <- drop_na(data,indicator)
+  calc <- data_clean[,indicator] %>%  sum()/nrow(data_clean)
+  calc
+}
+```
+
+#Multi Variable Function
+
+```{r}
+multi_indicator_ratio <- function(data,indicator) {
+  data_clean <- drop_na(data,indicator)
+  multi <- data_clean[,indicator] %>% as.data.frame() %>% table()/nrow(data_clean)
+  multi
+}
+```
+
+#Survey Difference Function
+
+```{r}
+survey_diff_ratio <- function(data_r1,data_r2,indicator){
+  # For binary indicator
+  if(unique(data_r1 %>% select(indicator)) %>% nrow() < 3){
+    (abs(bin_indicator_ratio(data_r1)-bin_indicator_ratio(data_r2)))
+  }
+  else{
+    (abs(multi_indicator_ratio(data_r1)-multi_indicator_ratio(data_r2)))
+  }
+}
+```
+
+#Survey 1: Experience
+
+```{r}
+#Mental Health Worsening
+multi_indicator_ratio(dt,"mh_change")
+
+#Control
+multi_indicator_ratio(dt,"control")
+
+#Proximity
+multi_indicator_ratio(dt,"proximity")
+
+#Thought consuming
+multi_indicator_ratio(dt,"thought_consuming")
+
+#Stress_increased
+bin_indicator_ratio(dt,"stress_increased")
+
+#Concern_Own_Health
+bin_indicator_ratio(dt,"concern_own_health")
+
+#Concern_Family_Health
+bin_indicator_ratio(dt,"concern_family_health")
+
+```
+
+#Survey 2: Experience
+
+```{r}
+#Mental Health Worsening
+multi_indicator_ratio(dt2,"mh_change")
+
+#Control
+# multi_indicator_ratio(dt2,"control")
+
+#Proximity
+# multi_indicator_ratio(dt2,"proximity")
+
+#Thought consuming
+# multi_indicator_ratio(dt2,"thought_consuming")
+
+#Stress_increased
+bin_indicator_ratio(dt2,"stress_increased")
+
+#Concern_Own_Health
+bin_indicator_ratio(dt2,"concern_own_health")
+
+#Concern_Family_Health
+bin_indicator_ratio(dt2,"concern_family_health")
+
+```
+
+#Risk and Protective Factors
+```{r}
+#Alcohol
+multi_indicator_ratio(dt,"alc_consumption")
+
+#Physical Activity
+multi_indicator_ratio(dt,"trans_know_3_5")
+
+#Fruits and veg
+multi_indicator_ratio(dt,"hlth_status_2_4")
+
+#Sleep
+multi_indicator_ratio(dt,"hlth_status_2_6")
+
+```
+# Difference of ratio between surveys
+
+```{r}
+survey_diff_ratio(dt, dt2, "mh_change")
+```
+
+
+
