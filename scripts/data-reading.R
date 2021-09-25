@@ -7,7 +7,7 @@ library(tidyr)
 
 # Setting some paths for convenience  ----
 ## raw data and wrangled data folder locations -----
-raw_data_loc <- here("data", "00_raw_data")
+raw_data_loc <- here("data")
 wrangled_data_loc <- here("data", "01_wrangled_data")
 scripts_loc <- here("scripts")
 
