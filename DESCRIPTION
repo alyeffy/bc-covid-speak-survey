@@ -3,15 +3,15 @@ Title: An R package for visualization of the SPEAK Survey
 Version: 0.0.0.9000
 Authors@R: c(
        person("Alyssa",           email = "alyssafegen@alumni.ubc.ca",          role = c("aut", "cre")),
-       person("Connie", “Brett”,  email = "connie@aggregate-genius.com",        role = c("aut","cph")),
+       person("Connie",           email = "connie@aggregate-genius.com",        role = c("aut","cph")),
        person("Saheba",                                                         role = "ctb"),
        person("Shreyas",          email = "shreyas@fastmail.com",               role = "aut"),
        person("Nathan",           email = "castlenathan07@gmail.com",           role = "ctb"),
        person("Vincent",          email = "vincentalbertusputra@gmail.com",     role = "ctb"),
        person("Warren",           email = "warrenhokin@gmail.com",              role = "aut"),
-       person("Lavanya",                                                        role = "ctb")
-       person("Ruijia", “Zhang”,  email = "ruijia4@ualberta.ca",                role = "ctb")
-       person("Ha", “Do”,                                                        role = "ctb")
+       person("Lavanya",                                                        role = "ctb"),
+       person("Ruijia",           email = "ruijia4@ualberta.ca",                role = "ctb"),
+       person("Ha",                                                         role = "ctb")
        )
 Description: An R package to visualize and interpret the SPEAK Survey on the experiences of BC residents with the provincial response to the COVID-19 pandemic. 
 Depends:
