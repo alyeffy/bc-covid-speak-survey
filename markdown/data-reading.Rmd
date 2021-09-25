@@ -1,0 +1,100 @@
+```{r load libraries}
+library(dplyr)
+library(stringr)
+library(openxlsx)
+library(here)
+library(tidyr)
+```
+
+Setting Data folder and file locations
+
+```{r data locations and files}
+## raw data and wrangled data folder locations -----
+raw_data_loc <- here("data")
+scripts_loc <- here("scripts")
+
+
+## Data file locations for convenience -----
+data_dictionary_file <- here(raw_data_loc, "Data_dictionary_with_description_20201105_CORRECTED.xlsx")
+raw_survey_data_file <- here(raw_data_loc, "SPEAKI_Survey_Data_deidentified.xlsx")
+```
+
+
+Source Functions
+
+```{r}
+source(here(scripts_loc, "read-data-dict.R"))
+source(here(scripts_loc, "parse-survey.R"))
+       
+```
+
+
+Read in Data dictionary sheet
+
+```{r}
+data_dictionary <- read_data_dictionary(data_dictionary_file)
+```
+
+
+Read in CHSA information
+
+```{r}
+chsa_tbl <- read_chsa_data_dict(data_dictionary_file)
+```
+
+
+Read in LHA information
+
+```{r}
+lha_tbl <- read_lha_data_dict(data_dictionary_file)
+```
+
+
+Read in HA information
+
+```{r}
+ha_tbl <- read_ha_data_dict(data_dictionary_file)
+```
+
+
+Read in HSDA information
+
+```{r}
+hsda_tbl <- read_hsda_data_dict(data_dictionary_file)
+```
+
+
+Read in CHSA UR Class
+
+```{r}
+chsa_ur_class_tbl <- read_chsa_ur_class_data_dict(data_dictionary_file)
+```
+
+Read in Raw Survey Data
+
+```{r}
+## Reading in a sample of the survey data to sample -----
+## 100 rows and all the columns 
+
+raw_survey_data <- read.xlsx(raw_survey_data_file,
+                             rows = c(1:100)) %>%
+  as_tibble()
+
+```
+
+
+Join Data dictionary with the raw survey data. This can be run directly
+without reading in data dictionary file 
+
+```{r}
+joined_survey_data_dictionary_tbl <- join_dictionary_with_survey_data(raw_survey_data,
+                                                                      data_dictionary_file)
+```
+
+
+Parsing data dictionary values in the survey data. Currently this has
+problems while parsing the whole table. 
+
+```{r}
+parsed_survey_data_tbl <- parse_survey_data_dictionary(joined_survey_data_dictionary_tbl)
+```
