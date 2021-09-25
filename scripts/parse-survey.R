@@ -64,7 +64,10 @@ join_dictionary_with_survey_data <- function(raw_survey_data,
 #' @examples
 parse_survey_data_dictionary <- function(joined_data_dict_transposed_tbl){
   replaced_transposed_tbl <- joined_data_dict_transposed_tbl %>%
+    filter(key != "change_1",
+           key != "change_2",
+           key != "trans_know_4_96_text") %>% 
   rowwise() %>%
-  ## mutate(test = str_match(code_list, paste0(`R_004WGVdGVpCrWN3`, '=([a=zA-z]*);'))[,2])
-  mutate(across(starts_with("R_"), ~ str_match(code_list, paste0(.x, '=([a-zA-Z]*);'))[,2]))
+    ## mutate(test = str_match(code_list, paste0(`R_004WGVdGVpCrWN3`, '=([a=zA-z]*);'))[,2])
+    mutate(across(starts_with("R_"), ~ str_match(code_list, paste0(.x, '=([a-zA-Z]*);'))[,2]))
 }
