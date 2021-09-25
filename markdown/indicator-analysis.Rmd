@@ -63,10 +63,10 @@ multi_indicator_ratio <- function(data,indicator) {
 survey_diff_ratio <- function(data_r1,data_r2,indicator){
   # For binary indicator
   if(unique(data_r1 %>% select(indicator)) %>% nrow() < 3){
-    (abs(bin_indicator_ratio(data_r1)-bin_indicator_ratio(data_r2)))
+    ((bin_indicator_ratio(data_r2, indicator)-bin_indicator_ratio(data_r1, indicator)))
   }
   else{
-    (abs(multi_indicator_ratio(data_r1)-multi_indicator_ratio(data_r2)))
+    ((multi_indicator_ratio(data_r2, indicator)-multi_indicator_ratio(data_r1, indicator)))
   }
 }
 ```
