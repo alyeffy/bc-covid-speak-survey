@@ -26,13 +26,13 @@ Mentor: Dr. Connie Brett
 
 [Documentation](https://github.com/alyeffy/bc-covid-speak-survey/milestone/1): Warren, Nathan
 
-[Scripting/Coding](https://github.com/alyeffy/bc-covid-speak-survey/milestone/2): Shreya, Ruijia
+[Scripting/Coding](https://github.com/alyeffy/bc-covid-speak-survey/milestone/2): Shreyas, Ruijia
 
 [Modelling/Analysis](https://github.com/alyeffy/bc-covid-speak-survey/milestone/3): Warren, Nathan, Vincent
 
 [Data Visualization](https://github.com/alyeffy/bc-covid-speak-survey/milestone/4): Ha, Lavanya, Saheba
 
-[Sanity-Checking](https://github.com/alyeffy/bc-covid-speak-survey/milestone/5): Shreya, Connie, Alyssa
+[Sanity-Checking](https://github.com/alyeffy/bc-covid-speak-survey/milestone/5): Shreyas, Connie, Alyssa
 
 ## Vancouver Datajam 2021 Schedule:
 
